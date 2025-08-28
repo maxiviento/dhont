@@ -316,7 +316,7 @@ const totalSeats = 9;
 <div class="simulator-container">
   <h1>Simulador Electoral D'Hont - Córdoba 2025</h1>
   <p class="subtitle">Padrón Electoral: {totalElectors.toLocaleString()} electores | {totalSeats} diputados a elegir</p>
-  
+  <p class="subtitle">idea y desarrollo: maxiviento</p>
   <div class="input-section">
     <div class="participation-input">
       <label for="participation">Participación Electoral (%):</label>
@@ -815,8 +815,18 @@ const totalSeats = 9;
   // Event listeners
   document.getElementById('calculate-btn').addEventListener('click', calculateResults);
   
-  // Auto-calculate on input change
+  // Auto-calculate on input change and select on click
   document.querySelectorAll('input[type="number"]').forEach(input => {
+    // Auto-select text when input is clicked
+    input.addEventListener('click', function() {
+      this.select();
+    });
+    
+    // Also select when focused via keyboard
+    input.addEventListener('focus', function() {
+      this.select();
+    });
+    
     input.addEventListener('input', () => {
       // Auto-update distribution display
       updateAutoDistributionOnChange();
