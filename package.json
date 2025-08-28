@@ -6,7 +6,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "start": "astro preview --host 0.0.0.0 --port 80",
+    "start": "astro preview --host 0.0.0.0 --port $PORT",
     "astro": "astro",
     "docker:dev": "docker-compose up dhont-dev",
     "docker:build": "docker build -t dhont-simulator .",
