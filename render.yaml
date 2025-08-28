@@ -1,14 +1,10 @@
 services:
-  - type: web
+  - type: static
     name: dhont-simulator
-    env: node
     plan: free
-    region: oregon
     branch: main
-    buildCommand: npm ci && npm run build && mkdir -p dist
-    startCommand: npm run start
+    buildCommand: npm ci && npm run build
     publishDir: dist
-    healthCheckPath: /
     envVars:
       - key: NODE_ENV
         value: production
