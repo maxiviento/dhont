@@ -605,45 +605,45 @@ const totalSeats = 9;
         </h2>
         <p class="text-center text-gray-600 mb-8">Distribución de bancas y diputados electos por partido político</p>
         
-        <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
+        <div class="flex flex-wrap gap-6 justify-center">
           ${results.filter(list => list.seats > 0).map((list, index) => `
-            <div class="group relative bg-white rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 overflow-hidden border border-gray-100">
+            <div class="group relative bg-white rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 overflow-hidden border border-gray-100 flex-1 min-w-[320px] max-w-[400px]">
               <!-- Decorative top bar -->
               <div class="h-2 w-full" style="background: linear-gradient(90deg, ${list.color} 0%, ${list.color}88 100%)"></div>
               
               <!-- Header premium -->
-              <div class="relative p-8 pb-6">
-                <div class="absolute top-4 right-4 opacity-10">
-                  <svg class="w-16 h-16" style="color: ${list.color}" fill="currentColor" viewBox="0 0 20 20">
+              <div class="relative p-6 pb-4">
+                <div class="absolute top-3 right-3 opacity-10">
+                  <svg class="w-12 h-12 sm:w-16 sm:h-16" style="color: ${list.color}" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z" clip-rule="evenodd"/>
                     <path d="M2 13.692V16a2 2 0 002 2h12a2 2 0 002-2v-2.308A24.974 24.974 0 0110 15c-2.796 0-5.487-.46-8-1.308z"/>
                   </svg>
                 </div>
                 
-                <div class="flex items-start space-x-4 relative z-10">
-                  <div class="w-16 h-16 rounded-2xl shadow-lg flex items-center justify-center text-white font-bold text-xl" style="background: linear-gradient(135deg, ${list.color} 0%, ${list.color}cc 100%)">
+                <div class="flex items-start space-x-3 relative z-10">
+                  <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl shadow-lg flex items-center justify-center text-white font-bold text-lg sm:text-xl flex-shrink-0" style="background: linear-gradient(135deg, ${list.color} 0%, ${list.color}cc 100%)">
                     ${index + 1}°
                   </div>
-                  <div class="flex-1">
-                    <h3 class="text-xl font-bold text-gray-800 mb-1 leading-tight">${list.name}</h3>
-                    <p class="text-sm text-gray-600 italic mb-3">${list.leader}</p>
+                  <div class="flex-1 min-w-0">
+                    <h3 class="text-lg sm:text-xl font-bold text-gray-800 mb-1 leading-tight truncate">${list.name}</h3>
+                    <p class="text-sm text-gray-600 italic mb-2 truncate">${list.leader}</p>
                     <div class="flex items-center space-x-2">
-                      <div class="text-3xl font-black" style="color: ${list.color}">${list.seats}</div>
-                      <div class="text-sm text-gray-500 font-medium">${list.seats === 1 ? 'Banca' : 'Bancas'}</div>
+                      <div class="text-2xl sm:text-3xl font-black" style="color: ${list.color}">${list.seats}</div>
+                      <div class="text-xs sm:text-sm text-gray-500 font-medium">${list.seats === 1 ? 'Banca' : 'Bancas'}</div>
                     </div>
                   </div>
                 </div>
               </div>
               
               <!-- Stats section -->
-              <div class="px-8 pb-6">
-                <div class="bg-gradient-to-r from-gray-50 to-gray-100 rounded-2xl p-4 mb-6">
-                  <div class="flex justify-between items-center">
-                    <div>
+              <div class="px-6 pb-6">
+                <div class="bg-gradient-to-r from-gray-50 to-gray-100 rounded-2xl p-4 mb-4">
+                  <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+                    <div class="flex-1">
                       <p class="text-xs text-gray-500 font-medium uppercase tracking-wide mb-1">Votos Obtenidos</p>
-                      <p class="text-2xl font-bold text-gray-800">${list.votes.toLocaleString()}</p>
+                      <p class="text-xl sm:text-2xl font-bold text-gray-800">${list.votes.toLocaleString()}</p>
                     </div>
-                    <div class="text-right">
+                    <div class="flex-shrink-0">
                       <div class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold" style="background-color: ${list.color}22; color: ${list.color}">
                         ${((list.votes / validVotes) * 100).toFixed(2)}%
                       </div>
@@ -653,8 +653,8 @@ const totalSeats = 9;
                 
                 <!-- Diputados electos -->
                 <div>
-                  <h4 class="text-sm font-bold text-gray-700 mb-4 flex items-center">
-                    <svg class="w-4 h-4 mr-2" style="color: ${list.color}" fill="currentColor" viewBox="0 0 20 20">
+                  <h4 class="text-sm font-bold text-gray-700 mb-3 flex items-center">
+                    <svg class="w-4 h-4 mr-2 flex-shrink-0" style="color: ${list.color}" fill="currentColor" viewBox="0 0 20 20">
                       <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"/>
                     </svg>
                     Diputados Electos
@@ -662,11 +662,11 @@ const totalSeats = 9;
                   <div class="space-y-2">
                     ${list.candidates.slice(0, list.seats).map((candidate, idx) => `
                       <div class="flex items-center space-x-3 p-3 bg-white rounded-xl border border-gray-100 hover:shadow-md transition-all duration-200">
-                        <div class="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-md" style="background: linear-gradient(135deg, ${list.color} 0%, ${list.color}cc 100%)">
+                        <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-white font-bold text-xs sm:text-sm shadow-md flex-shrink-0" style="background: linear-gradient(135deg, ${list.color} 0%, ${list.color}cc 100%)">
                           ${idx + 1}
                         </div>
-                        <span class="font-medium text-gray-800 flex-1">${candidate}</span>
-                        <div class="w-2 h-2 rounded-full" style="background-color: ${list.color}"></div>
+                        <span class="font-medium text-gray-800 flex-1 text-sm sm:text-base truncate">${candidate}</span>
+                        <div class="w-2 h-2 rounded-full flex-shrink-0" style="background-color: ${list.color}"></div>
                       </div>
                     `).join('')}
                   </div>
