@@ -7,6 +7,7 @@ services:
     branch: main
     buildCommand: npm ci && npm run build
     startCommand: npm run start
+    publishDir: dist
     healthCheckPath: /
     envVars:
       - key: NODE_ENV
