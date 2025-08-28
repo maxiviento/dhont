@@ -5,7 +5,7 @@ const electoralLists = [
     id: 1,
     name: "Alianza La Libertad Avanza",
     leader: "Javier Milei",
-    color: "#FFD700",
+    color: "#8E44AD",
     candidates: [
       "Gonzalo Roca",
       "Laura Soldano", 
@@ -107,7 +107,7 @@ const electoralLists = [
     id: 7,
     name: "Encuentro por la República",
     leader: "Aurelio García Elorrio",
-    color: "#8E44AD",
+    color: "#FFD700",
     candidates: [
       "Aurelio García Elorrio",
       "Ana Bastán",
@@ -364,22 +364,24 @@ const totalSeats = 9;
   </div>
   
   <div class="results-section" id="results-section" style="display: none;">
-    <h2>Resultados de la Simulación</h2>
-    
-    <div class="elected-deputies" id="elected-deputies">
-      <!-- Elected deputies will be populated by JavaScript -->
-    </div>
-    
-    <div class="summary-stats" id="summary-stats">
-      <!-- Stats will be populated by JavaScript -->
-    </div>
-    
-    <div class="seats-distribution" id="seats-distribution">
-      <!-- Seats distribution will be populated by JavaScript -->
-    </div>
-    
-    <div class="dhont-table" id="dhont-table">
-      <!-- D'Hont calculation table will be populated by JavaScript -->
+    <div class="bg-gray-50 p-8 rounded-2xl shadow-xl mx-auto max-w-7xl mt-8">
+      <h2 class="text-4xl font-bold text-center bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-8">Resultados de la Simulación</h2>
+      
+      <div class="elected-deputies" id="elected-deputies">
+        <!-- Elected deputies will be populated by JavaScript -->
+      </div>
+      
+      <div class="summary-stats" id="summary-stats">
+        <!-- Stats will be populated by JavaScript -->
+      </div>
+      
+      <div class="seats-distribution" id="seats-distribution">
+        <!-- Seats distribution will be populated by JavaScript -->
+      </div>
+      
+      <div class="dhont-table" id="dhont-table">
+        <!-- D'Hont calculation table will be populated by JavaScript -->
+      </div>
     </div>
   </div>
 </div>
@@ -524,7 +526,7 @@ const totalSeats = 9;
     
     // Estadísticas generales con diseño moderno
     summaryStats.innerHTML = `
-      <div class="mb-8">
+      <div class="mb-12">
         <h2 class="text-3xl font-bold text-center bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-8">
           📊 Resumen Electoral
         </h2>
@@ -600,10 +602,10 @@ const totalSeats = 9;
     // Resultados electorales con diseño premium
     seatsDistribution.innerHTML = `
       <div class="mb-12">
-        <h2 class="text-4xl font-bold text-center bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">
+        <h2 class="text-4xl font-bold text-center bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-4">
           🏆 Resultados Electorales
         </h2>
-        <p class="text-center text-gray-600 mb-8">Distribución de bancas y diputados electos por partido político</p>
+        <p class="text-center text-gray-600 mb-10 text-lg">Distribución de bancas y diputados electos por partido político</p>
         
         <div class="flex flex-wrap gap-6 justify-center">
           ${results.filter(list => list.seats > 0).map((list, index) => `
@@ -685,55 +687,142 @@ const totalSeats = 9;
     const partiesWithSeats = results.filter(party => party.seats > 0);
     
     dhontTable.innerHTML = `
-      <h3>Tabla D'Hont - Cocientes por Divisor</h3>
-      <div class="dhont-matrix-container">
-        <table class="dhont-matrix-table">
-          <thead>
-            <tr>
-              <th class="party-header">Partido</th>
-              <th class="votes-header">Votos</th>
-              ${Array.from({length: Math.max(...partiesWithSeats.map(p => p.seats)) + 2}, (_, i) => 
-                `<th class="divisor-header">${i + 1}</th>`
-              ).join('')}
-            </tr>
-          </thead>
-          <tbody>
-            ${partiesWithSeats.map(party => {
-              const maxDivisor = Math.max(party.seats + 2, 6); // Mostrar al menos 6 columnas
-              return `
-                <tr>
-                  <td class="party-cell" style="background-color: ${party.color}; color: white;">
-                    <div class="party-info">
-                      <div class="party-name">${party.name.length > 20 ? party.name.substring(0, 20) + '...' : party.name}</div>
-                      <div class="seats-count">${party.seats} bancas</div>
-                    </div>
-                  </td>
-                  <td class="votes-cell">${party.votes.toLocaleString()}</td>
-                  ${Array.from({length: maxDivisor}, (_, divisor) => {
-                    const quotient = party.votes / (divisor + 1);
-                    const isWinning = seatAssignments.some(assignment => 
-                      assignment.winner === party.name && assignment.divisor === divisor + 1
-                    );
-                    return `
-                      <td class="quotient-cell ${isWinning ? 'winning-quotient' : ''}">
-                        ${quotient.toLocaleString('es-AR', {maximumFractionDigits: 2})}
-                      </td>
-                    `;
-                  }).join('')}
-                </tr>
-              `;
-            }).join('')}
-          </tbody>
-        </table>
-      </div>
-      
-      <div class="dhont-legend">
-        <p><strong>Leyenda:</strong></p>
-        <ul>
-          <li><span class="legend-winning"></span> Cocientes ganadores (obtuvieron banca)</li>
-          <li>Los números en la fila superior indican el divisor (1, 2, 3, etc.)</li>
-          <li>Solo se muestran los partidos que obtuvieron al menos una banca</li>
-        </ul>
+      <div class="mt-16">
+        <h3 class="text-3xl font-bold text-center bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent mb-6">
+          📋 Tabla D'Hont - Proceso de Asignación de Bancas
+        </h3>
+        
+        <!-- Explicación del método -->
+        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-6 mb-8 shadow-lg">
+          <h4 class="text-xl font-bold text-blue-800 mb-4 flex items-center">
+            <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+            </svg>
+            ¿Cómo funciona el método D'Hont?
+          </h4>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div>
+              <p class="text-gray-700 mb-3"><strong>Paso 1:</strong> Se dividen los votos de cada partido por 1, 2, 3, 4, etc.</p>
+              <p class="text-gray-700 mb-3"><strong>Paso 2:</strong> Se ordenan todos los cocientes de mayor a menor</p>
+              <p class="text-gray-700"><strong>Paso 3:</strong> Los ${totalSeats} cocientes más altos obtienen las bancas</p>
+            </div>
+            <div class="bg-white rounded-xl p-4 border border-blue-100">
+              <p class="text-sm text-gray-600 mb-2"><strong>Fórmula:</strong></p>
+              <div class="bg-blue-100 text-blue-800 font-mono text-center py-2 rounded-lg">
+                Cociente = Votos ÷ (Bancas obtenidas + 1)
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Orden de asignación de bancas -->
+        <div class="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-2xl p-6 mb-8 shadow-lg">
+          <h4 class="text-xl font-bold text-green-800 mb-4 flex items-center">
+            <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+            </svg>
+            Orden de Asignación de Bancas
+          </h4>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            ${seatAssignments.map((assignment, index) => `
+              <div class="bg-white rounded-xl p-4 border-l-4 shadow-md hover:shadow-lg transition-all duration-200" style="border-left-color: ${assignment.winnerColor}">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-2xl font-bold text-gray-800">${index + 1}°</span>
+                  <div class="text-sm text-gray-500">Cociente: ${assignment.quotient.toLocaleString('es-AR', {maximumFractionDigits: 2})}</div>
+                </div>
+                <div class="text-sm font-semibold text-gray-700 mb-1">${assignment.winner}</div>
+                <div class="text-xs text-gray-600">${assignment.candidateName}</div>
+                <div class="text-xs text-gray-500 mt-2">
+                  ${assignment.votes.toLocaleString()} ÷ ${assignment.divisor} = ${assignment.quotient.toLocaleString('es-AR', {maximumFractionDigits: 2})}
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <!-- Tabla de cocientes -->
+        <div class="overflow-x-auto my-8 rounded-xl shadow-lg">
+          <h4 class="text-lg font-bold text-gray-800 mb-6 text-center">Tabla de Cocientes Completa</h4>
+          <table class="w-full bg-white rounded-xl overflow-hidden shadow-md border border-gray-200" style="min-width: 900px;">
+            <thead>
+              <tr class="bg-gradient-to-r from-gray-50 to-gray-100">
+                <th class="text-left px-6 py-5 font-bold text-gray-700 border-b-2 border-gray-200 text-base" style="min-width: 220px;">PARTIDO</th>
+                <th class="text-center px-4 py-5 font-bold text-gray-700 border-b-2 border-gray-200 text-sm uppercase tracking-wide" style="min-width: 140px;">VOTOS</th>
+                ${Array.from({length: Math.max(...partiesWithSeats.map(p => p.seats)) + 2}, (_, i) => 
+                  `<th class="text-center px-4 py-5 font-extrabold text-gray-600 border-b-2 border-gray-200 text-base" style="min-width: 120px;">÷${i + 1}</th>`
+                ).join('')}
+              </tr>
+            </thead>
+            <tbody>
+              ${partiesWithSeats.map((party, rowIndex) => {
+                const maxDivisor = Math.max(party.seats + 2, 6);
+                const isEvenRow = rowIndex % 2 === 1;
+                return `
+                  <tr class="${isEvenRow ? 'bg-gray-50' : 'bg-white'}">
+                    <td class="px-6 py-6 border-b border-gray-200 font-bold text-white" style="background-color: ${party.color}; ${isEvenRow ? 'opacity: 0.95;' : ''}">
+                      <div class="flex flex-col gap-1.5">
+                        <div class="text-sm font-bold leading-tight">${party.name.length > 20 ? party.name.substring(0, 20) + '...' : party.name}</div>
+                        <div class="text-xs opacity-90 font-medium">${party.seats} bancas</div>
+                      </div>
+                    </td>
+                    <td class="px-4 py-6 text-center font-bold text-gray-700 border-b border-gray-200 text-base ${isEvenRow ? 'bg-gray-100' : 'bg-gray-50'}">${party.votes.toLocaleString()}</td>
+                    ${Array.from({length: maxDivisor}, (_, divisor) => {
+                      const quotient = party.votes / (divisor + 1);
+                      const assignment = seatAssignments.find(a => 
+                        a.winner === party.name && a.divisor === divisor + 1
+                      );
+                      const isWinning = !!assignment;
+                      const seatNumber = assignment ? seatAssignments.indexOf(assignment) + 1 : '';
+                      
+                      const baseClasses = "px-4 py-6 text-center font-semibold border-b border-gray-200 text-base relative transition-all duration-200";
+                      const bgClasses = isWinning 
+                        ? "bg-gradient-to-br from-green-500 to-green-600 text-white font-extrabold shadow-lg border-2 border-green-500" 
+                        : `${isEvenRow ? 'bg-gray-50' : 'bg-white'} text-gray-800 hover:bg-gray-100 hover:scale-105`;
+                      
+                      return `
+                        <td class="${baseClasses} ${bgClasses}" style="min-height: 70px; vertical-align: middle;" ${isWinning ? `title="Banca #${seatNumber} - ${assignment.candidateName}"` : ''}>
+                          ${quotient.toLocaleString('es-AR', {maximumFractionDigits: 2})}
+                          ${isWinning ? `
+                            <div class="absolute top-1.5 left-2 bg-white bg-opacity-95 text-green-600 text-xs font-extrabold px-1.5 py-0.5 rounded shadow-sm">#${seatNumber}</div>
+                            <div class="absolute top-1.5 right-2 text-sm font-bold">✓</div>
+                          ` : ''}
+                        </td>
+                      `;
+                    }).join('')}
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+        
+        <div class="dhont-legend">
+          <div class="grid md:grid-cols-2 gap-6">
+            <div>
+              <p class="font-bold text-gray-800 mb-3">📊 Leyenda de la Tabla:</p>
+              <ul class="space-y-2">
+                <li class="flex items-center">
+                  <span class="legend-winning mr-3"></span>
+                  <span><strong>Cocientes ganadores</strong> (obtuvieron banca)</span>
+                </li>
+                <li class="flex items-center">
+                  <span class="w-6 h-4 bg-gray-100 border rounded mr-3"></span>
+                  <span>Cocientes no ganadores</span>
+                </li>
+                <li class="text-sm text-gray-600">• El número #N indica el orden de asignación de la banca</li>
+              </ul>
+            </div>
+            <div>
+              <p class="font-bold text-gray-800 mb-3">🔢 Interpretación:</p>
+              <ul class="space-y-2 text-sm text-gray-700">
+                <li>• Cada columna representa la división por 1, 2, 3, etc.</li>
+                <li>• Los ${totalSeats} cocientes más altos obtienen las bancas</li>
+                <li>• Solo se muestran partidos que obtuvieron al menos una banca</li>
+                <li>• Pasa el cursor sobre las celdas verdes para ver detalles</li>
+              </ul>
+            </div>
+          </div>
+        </div>
       </div>
     `;
     
@@ -884,240 +973,7 @@ const totalSeats = 9;
     margin-top: 30px;
   }
   
-  .results-section h2 {
-    text-align: center;
-    color: #2c3e50;
-    margin-bottom: 25px;
-  }
-  
-  /* Estilos para tarjetas de resumen */
-  .summary-cards-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
-    margin: 20px 0 40px 0;
-  }
-  
-  .summary-card {
-    background: white;
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-    display: flex;
-    align-items: center;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    border-left: 5px solid;
-  }
-  
-  .summary-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-  }
-  
-  .participation-card {
-    border-left-color: #3498db;
-  }
-  
-  .blank-votes-card {
-    border-left-color: #95a5a6;
-  }
-  
-  .valid-votes-card {
-    border-left-color: #27ae60;
-  }
-  
-  .seats-card {
-    border-left-color: #e74c3c;
-  }
-  
-  .card-icon {
-    font-size: 2.5em;
-    margin-right: 20px;
-    opacity: 0.8;
-  }
-  
-  .card-content {
-    flex: 1;
-  }
-  
-  .card-content h4 {
-    margin: 0 0 8px 0;
-    color: #2c3e50;
-    font-size: 16px;
-    font-weight: 600;
-  }
-  
-  .card-main-value {
-    font-size: 2.2em;
-    font-weight: bold;
-    color: #2c3e50;
-    margin: 0;
-    line-height: 1.1;
-  }
-  
-  .card-detail {
-    color: #7f8c8d;
-    margin: 5px 0 0 0;
-    font-size: 14px;
-  }
-  
-  /* Estilos para tarjetas de distribución */
-  .distribution-cards-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 20px;
-    margin: 20px 0 40px 0;
-  }
-  
-  .distribution-card {
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-  
-  .distribution-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-  }
-  
-  .distribution-card-header {
-    display: flex;
-    align-items: center;
-    padding: 20px;
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    border-bottom: 1px solid #dee2e6;
-  }
-  
-  .party-color-indicator {
-    width: 50px;
-    height: 50px;
-    border-radius: 8px;
-    margin-right: 15px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  }
-  
-  .party-name-section {
-    flex: 1;
-  }
-  
-  .party-name-dist {
-    margin: 0 0 5px 0;
-    font-size: 16px;
-    font-weight: bold;
-    color: #2c3e50;
-    line-height: 1.2;
-  }
-  
-  .party-leader {
-    font-size: 13px;
-    color: #6c757d;
-    font-style: italic;
-  }
-  
-  .distribution-stats {
-    padding: 20px;
-  }
-  
-  .stat-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-    padding: 12px 0;
-    border-bottom: 1px solid #f1f3f4;
-  }
-  
-  .stat-item:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
-  }
-  
-  .stat-label {
-    font-weight: 500;
-    color: #495057;
-    font-size: 14px;
-  }
-  
-  .stat-number {
-    font-weight: bold;
-    color: #2c3e50;
-    font-size: 16px;
-  }
-  
-  .stat-percentage {
-    background: #e9ecef;
-    color: #495057;
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-size: 12px;
-    font-weight: 600;
-    margin-left: 8px;
-  }
-  
-  .seats-stat {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    padding: 15px;
-    border-radius: 8px;
-    border: none !important;
-  }
-  
-  .stat-number-large {
-    font-size: 2.5em;
-    font-weight: bold;
-    color: #e74c3c;
-    margin: 0 10px;
-  }
-  
-  .stat-text {
-    color: #6c757d;
-    font-size: 14px;
-    font-weight: 500;
-  }
-  
-  .seats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
-    margin-bottom: 30px;
-  }
-  
-  .seat-card {
-    background: white;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    border: 3px solid;
-  }
-  
-  .seat-header {
-    color: white;
-    padding: 15px;
-    text-align: center;
-  }
-  
-  .seat-header h4 {
-    margin: 0;
-    font-size: 1.1em;
-  }
-  
-  .seat-content {
-    padding: 15px;
-    text-align: center;
-  }
-  
-  .votes {
-    margin: 0 0 10px 0;
-    color: #7f8c8d;
-  }
-  
-  .seats-won {
-    font-size: 1.5em;
-    font-weight: bold;
-    color: #2c3e50;
-    margin: 0;
-  }
+  /* Estilos CSS tradicionales eliminados - usando solo Tailwind */
   
   .deputies-grid {
     display: grid;
@@ -1156,7 +1012,7 @@ const totalSeats = 9;
   }
   
   .deputy-number {
-    background: #3498db;
+    background: #6c757d;
     color: white;
     width: 25px;
     height: 25px;
@@ -1174,121 +1030,6 @@ const totalSeats = 9;
     color: #2c3e50;
   }
   
-  /* Estilos para las tarjetas de diputados */
-  .deputies-cards-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-    gap: 25px;
-    margin: 30px 0;
-  }
-  
-  .deputy-card {
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-    border-left: 6px solid;
-    overflow: hidden;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-  
-  .deputy-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-  }
-  
-  .deputy-card-header {
-    display: flex;
-    align-items: center;
-    padding: 20px;
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    border-bottom: 1px solid #dee2e6;
-  }
-  
-  .party-logo-placeholder {
-    width: 60px;
-    height: 60px;
-    border-radius: 8px;
-    margin-right: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  }
-  
-  .party-logo-placeholder::after {
-    content: "LOGO";
-    color: white;
-    font-size: 10px;
-    font-weight: bold;
-    opacity: 0.7;
-  }
-  
-  .party-info-header {
-    flex: 1;
-  }
-  
-  .party-title {
-    margin: 0 0 8px 0;
-    font-size: 18px;
-    font-weight: bold;
-    color: #2c3e50;
-    line-height: 1.2;
-  }
-  
-  .seats-badge {
-    background: #007bff;
-    color: white;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: bold;
-    text-transform: uppercase;
-  }
-  
-  .deputies-list {
-    padding: 0;
-  }
-  
-  .deputy-item-card {
-    display: flex;
-    align-items: center;
-    padding: 15px 20px;
-    border-bottom: 1px solid #f1f3f4;
-    transition: background-color 0.2s ease;
-  }
-  
-  .deputy-item-card:last-child {
-    border-bottom: none;
-  }
-  
-  .deputy-item-card:hover {
-    background-color: #f8f9fa;
-  }
-  
-  .deputy-position {
-    background: #6c757d;
-    color: white;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 14px;
-    margin-right: 15px;
-    flex-shrink: 0;
-  }
-  
-  .deputy-name-card {
-    font-weight: 500;
-    color: #2c3e50;
-    font-size: 16px;
-    line-height: 1.4;
-  }
-  
-  /* Estilos para la tabla D'Hont matriz */
   .dhont-matrix-container {
     overflow-x: auto;
     margin: 20px 0;
@@ -1298,111 +1039,171 @@ const totalSeats = 9;
   
   .dhont-matrix-table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
     background: white;
-    font-size: 15px;
-    min-width: 700px;
-    border: 2px solid #333;
+    font-size: 16px;
+    min-width: 900px;
+    border: 1px solid #dee2e6;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
   
   .dhont-matrix-table th {
-    background: #f8f9fa;
-    color: #333;
-    padding: 15px 20px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    color: #495057;
+    padding: 20px 16px;
     text-align: center;
-    font-weight: bold;
-    border: 2px solid #333;
-    font-size: 16px;
+    font-weight: 700;
+    border-bottom: 2px solid #dee2e6;
+    border-right: 1px solid #dee2e6;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .dhont-matrix-table th:last-child {
+    border-right: none;
   }
   
   .party-header {
-    min-width: 200px;
+    min-width: 220px;
     text-align: left !important;
-    padding-left: 25px;
+    padding-left: 20px;
+    text-transform: none;
+    font-size: 16px;
   }
   
   .votes-header {
-    min-width: 120px;
+    min-width: 140px;
+    font-size: 14px;
   }
   
   .divisor-header {
-    min-width: 100px;
-    font-size: 18px;
-    font-weight: bold;
+    min-width: 120px;
+    font-size: 16px;
+    font-weight: 800;
+    color: #6c757d;
   }
   
   .party-cell {
-    padding: 20px 25px;
+    padding: 24px 20px;
     text-align: left;
     font-weight: bold;
-    border: 2px solid #333;
-    min-width: 200px;
+    border-bottom: 1px solid #dee2e6;
+    border-right: 1px solid #dee2e6;
+    min-width: 220px;
     font-size: 14px;
+    vertical-align: middle;
   }
   
   .party-info {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 6px;
   }
   
   .party-name {
-    font-size: 14px;
-    font-weight: bold;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.2;
   }
   
   .seats-count {
     font-size: 12px;
-    opacity: 0.8;
+    opacity: 0.9;
+    font-weight: 500;
   }
   
   .votes-cell {
-    padding: 20px 15px;
+    padding: 24px 16px;
     text-align: center;
-    font-weight: bold;
-    color: #333;
-    border: 2px solid #333;
+    font-weight: 700;
+    color: #495057;
+    border-bottom: 1px solid #dee2e6;
+    border-right: 1px solid #dee2e6;
     background: #f8f9fa;
-    font-size: 15px;
-  }
-  
-  .quotient-cell {
-    padding: 20px 15px;
-    text-align: center;
-    border: 2px solid #333;
-    font-weight: 500;
-    background: white;
-    font-size: 15px;
-    min-height: 50px;
+    font-size: 16px;
     vertical-align: middle;
   }
   
-  .winning-quotient {
-    background: #27ae60 !important;
-    color: white !important;
-    font-weight: bold;
+  .quotient-cell {
+    padding: 24px 16px;
+    text-align: center;
+    border-bottom: 1px solid #dee2e6;
+    border-right: 1px solid #dee2e6;
+    font-weight: 600;
+    background: white;
+    font-size: 16px;
+    min-height: 70px;
+    vertical-align: middle;
     position: relative;
+    transition: all 0.2s ease;
+  }
+  
+  .quotient-cell:hover {
+    background: #f8f9fa;
+    transform: scale(1.02);
+  }
+  
+  .quotient-cell:last-child {
+    border-right: none;
+  }
+  
+  .winning-quotient {
+    background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%) !important;
+    color: white !important;
+    font-weight: 800 !important;
+    position: relative;
+    box-shadow: 0 2px 8px rgba(39, 174, 96, 0.3);
+    border: 2px solid #27ae60 !important;
+  }
+  
+  .winning-quotient:hover {
+    background: linear-gradient(135deg, #229954 0%, #27ae60 100%) !important;
+    transform: scale(1.05) !important;
+    box-shadow: 0 4px 12px rgba(39, 174, 96, 0.4);
   }
   
   .winning-quotient::after {
     content: "✓";
     position: absolute;
-    top: 2px;
-    right: 4px;
-    font-size: 12px;
+    top: 6px;
+    right: 8px;
+    font-size: 14px;
     font-weight: bold;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  }
+
+  .seat-number {
+    position: absolute;
+    top: 6px;
+    left: 8px;
+    background: rgba(255, 255, 255, 0.95);
+    color: #27ae60;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 4px;
+    line-height: 1;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
   }
   
-  .dhont-matrix-table tr:nth-child(even) .quotient-cell:not(.winning-quotient) {
+  .dhont-matrix-table tbody tr:nth-child(even) .quotient-cell:not(.winning-quotient) {
     background: #f8f9fa;
   }
   
-  .dhont-matrix-table tr:nth-child(even) .party-cell {
-    background: #f8f9fa;
+  .dhont-matrix-table tbody tr:nth-child(even) .party-cell {
+    opacity: 0.95;
   }
   
-  .dhont-matrix-table tr:nth-child(even) .votes-cell {
+  .dhont-matrix-table tbody tr:nth-child(even) .votes-cell {
     background: #e9ecef;
+  }
+  
+  .dhont-matrix-table tbody tr:last-child td {
+    border-bottom: none;
   }
   
   .dhont-legend {
