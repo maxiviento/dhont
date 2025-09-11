@@ -316,11 +316,11 @@ const totalSeats = 9;
 <div class="simulator-container">
   <h1>Simulador Electoral D'Hont - Córdoba 2025</h1>
   <p class="subtitle">Padrón Electoral: {totalElectors.toLocaleString()} electores | {totalSeats} diputados a elegir</p>
-  <p class="subtitle">idea y desarrollo: maxiviento</p>
+  <p class="subtitle">idea y desarrollo: <a href="https://github.com/maxiviento" target="_blank" rel="noopener noreferrer" class="github-link">maxiviento</a></p>
   <div class="input-section">
     <div class="participation-input">
       <label for="participation">Participación Electoral (%):</label>
-      <input type="number" id="participation" min="0" max="100" value="75" step="0.1">
+      <input type="number" id="participation" min="0" max="100" value="75" step="0.01" placeholder="75.00">
     </div>
     
     <div class="results-inputs">
@@ -329,14 +329,14 @@ const totalSeats = 9;
       <!-- Voto en Blanco (Obligatorio) -->
       <div class="blank-vote-input">
         <label for="blank-vote">Voto en Blanco (obligatorio):</label>
-        <input type="number" id="blank-vote" min="0" max="100" value="5" step="0.1" required>
+        <input type="number" id="blank-vote" min="0" max="100" value="5" step="0.01" required placeholder="5.00">
       </div>
       
       <h4>Principales Listas (cargar al menos 4):</h4>
       {electoralLists.slice(0, 6).map((list) => (
         <div class="list-input main-list" style={`border-left: 4px solid ${list.color}`}>
           <label for={`list-${list.id}`}>{list.name}:</label>
-          <input type="number" id={`list-${list.id}`} min="0" max="100" value="0" step="0.1" data-list-id={list.id} class="main-list-input">
+          <input type="number" id={`list-${list.id}`} min="0" max="100" value="0" step="0.01" data-list-id={list.id} class="main-list-input" placeholder="0.00">
         </div>
       ))}
       
@@ -608,7 +608,11 @@ const totalSeats = 9;
         <p class="text-center text-gray-600 mb-10 text-lg">Distribución de bancas y diputados electos por partido político</p>
         
         <div class="flex flex-wrap gap-6 justify-center">
-          ${results.filter(list => list.seats > 0).map((list, index) => `
+          ${results.filter(list => list.seats > 0).sort((a, b) => {
+            // Ordenar primero por número de bancas (descendente), luego por votos (descendente)
+            if (b.seats !== a.seats) return b.seats - a.seats;
+            return b.votes - a.votes;
+          }).map((list, index) => `
             <div class="group relative bg-white rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 overflow-hidden border border-gray-100 flex-1 min-w-[320px] max-w-[400px]">
               <!-- Decorative top bar -->
               <div class="h-2 w-full" style="background: linear-gradient(90deg, ${list.color} 0%, ${list.color}88 100%)"></div>
